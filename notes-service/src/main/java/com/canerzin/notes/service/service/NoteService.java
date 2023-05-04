@@ -33,13 +33,15 @@ public class NoteService {
         if (optional.isEmpty()) {
             throw new Exception("Note not found");
         }
-        var note = optional.get();
-        var likes = note.getLike();
-        if (action.equals(NoteLikeAction.LIKE)) note.setLike(++likes);
-        else {
-            note.setLike(--likes);
+        synchronized (this){
+            var note = optional.get();
+            var likes = note.getLike();
+            if (action.equals(NoteLikeAction.LIKE)) note.setLike(++likes);
+            else {
+                note.setLike(--likes);
+            }
+            return noteRepository.save(note);
         }
-        return noteRepository.save(note);
     }
 
 
